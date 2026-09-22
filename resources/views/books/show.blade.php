@@ -9,31 +9,31 @@
     <table style="max-width: 500px;">
         <tr>
             <th style="width: 160px; background: #f3f4f6;">Judul</th>
-            <td>{{ $book['judul'] }}</td>
+            <td>{{ $book->judul }}</td>
         </tr>
         <tr>
             <th style="background: #f3f4f6;">Penulis</th>
-            <td>{{ $book['penulis'] }}</td>
+            <td>{{ $book->penulis }}</td>
         </tr>
         <tr>
             <th style="background: #f3f4f6;">Penerbit</th>
-            <td>{{ $book['penerbit'] }}</td>
+            <td>{{ $book->penerbit }}</td>
         </tr>
         <tr>
             <th style="background: #f3f4f6;">Tahun Terbit</th>
-            <td>{{ $book['tahun_terbit'] }}</td>
+            <td>{{ $book->tahun_terbit }}</td>
         </tr>
         <tr>
             <th style="background: #f3f4f6;">ISBN</th>
-            <td>{{ $book['isbn'] ?? '-' }}</td>
+            <td>{{ $book->isbn ?? '-' }}</td>
         </tr>
         <tr>
             <th style="background: #f3f4f6;">Stok</th>
-            <td>{{ $book['stok'] }}</td>
+            <td>{{ $book->stok }}</td>
         </tr>
         <tr>
             <th style="background: #f3f4f6;">Kategori</th>
-            <td>{{ $book['kategori'] }}</td>
+            <td>{{ $book->category->nama_kategori ?? '-' }}</td>
         </tr>
     </table>
 @endsection
