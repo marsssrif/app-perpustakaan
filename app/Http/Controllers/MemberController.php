@@ -10,7 +10,7 @@ class MemberController extends Controller
 {
     public function index()
     {
-        $members = Member::latest()->get();
+        $members = Member::paginate(10);
 
         return view('members.index', compact('members'));
     }
@@ -22,15 +22,17 @@ class MemberController extends Controller
 
     public function store(StoreMemberRequest $request)
     {
-        $member = Member::create($request->validated());
+        $validated = $request->validated();
+
+        Member::create($validated);
 
         return redirect()->route('members.index')
-            ->with('success', "Anggota \"{$member->nama}\" berhasil ditambahkan.");
+            ->with('success', "Anggota \"{$validated['nama']}\" berhasil ditambahkan.");
     }
 
     public function show(string $id)
     {
-        $member = Member::findOrFail($id);
+        $member = Member::with(['loans.loanItems.book', 'loans.user'])->findOrFail($id);
 
         return view('members.show', compact('member'));
     }
