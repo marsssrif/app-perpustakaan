@@ -57,7 +57,7 @@ class AuthAndMiddlewareTest extends TestCase
             'password' => 'password',
         ]);
 
-        $response->assertRedirect('/books');
+        $response->assertRedirect(route('dashboard'));
         $this->assertAuthenticatedAs($user);
     }
 

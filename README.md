@@ -1,58 +1,125 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📚 Sistem Perpustakaan Digital Kampus (`app-perpustakaan`)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi web manajemen perpustakaan kampus berbasis **Laravel 12**, dibangun secara bertahap mulai dari Pertemuan 1 hingga Pertemuan 10 sebagai bagian dari mata kuliah Pemrograman Framework.
 
-## About Laravel
+Aplikasi ini mencakup manajemen data buku, kategori, anggota, transaksi peminjaman multi-buku, sistem autentikasi dan otorisasi multi-role (Admin & Petugas), REST API publik lengkap dengan API Resource, konsumsi API internal via Laravel HTTP Client pada Dashboard dan Laporan, serta data dummy realistis berbahasa Indonesia.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Fitur Utama
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Autentikasi & Otorisasi:**
+  - Login & logout berbasis session dengan proteksi CSRF.
+  - Multi-role: `admin` (akses penuh termasuk CRUD Kategori) dan `petugas` (akses operasional sirkulasi).
+  - Middleware custom `CheckAdminRole`.
+  - Halaman profil petugas dan fitur ganti password yang aman (`Hash::check` & `Hash::make`).
+- **Manajemen Data (CRUD):**
+  - **Buku:** Judul, penulis, penerbit, tahun terbit, ISBN, stok, dan relasi kategori.
+  - **Kategori:** Nama kategori dan deskripsi (khusus role Admin).
+  - **Anggota:** Nama, NIM unik, email kampus `@pens.ac.id`, nomor telepon, alamat, dan status aktif/nonaktif.
+  - **Peminjaman:** Peminjaman multi-buku (`book_ids[]`), pencatatan otomatis ID petugas login, dan fitur pengembalian buku.
+- **REST API (Pertemuan 9):**
+  - 11 endpoint REST API untuk `books`, `members`, `loans`, dan `stats`.
+  - Format response JSON konsisten menggunakan `BookResource`, `MemberResource`, dan `LoanResource`.
+  - Dokumentasi API lengkap tersedia di [API.md](./API.md).
+- **Konsumsi API & Dashboard (Pertemuan 10):**
+  - Halaman **Dashboard** mengonsumsi `GET /api/stats` untuk menampilkan kartu statistik live.
+  - Halaman **Laporan Peminjaman** mengonsumsi `GET /api/loans` untuk menampilkan tabel transaksi.
+  - Menggunakan Laravel HTTP Client dengan penanganan fallback `ConnectionException`.
+- **Seeder & Factory Realistis:**
+  - Data kurasi bergaya Indonesia (`APP_FAKER_LOCALE=id_ID`).
+  - Judul buku dikurasi per kategori, penerbit resmi Indonesia, dan email mahasiswa kampus PENS.
+- **Tampilan Bersih & Pagination Rapi:**
+  - Pagination custom teks/link yang konsisten tanpa dependensi framework CSS eksternal.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 📋 Prasyarat Sistem
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP >= 8.2 (dengan ekstensi `pdo`, `sqlite3` atau `pdo_mysql`)
+- Composer
+- Git
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## ⚙️ Instalasi & Menjalankan Aplikasi
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
+### 1. Clone Repository & Masuk Direktori
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone <url-repo-anda>
+cd app-perpustakaan
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Install Dependency
+```bash
+composer install
+```
 
-## Contributing
+### 3. Setup Environment File
+Salin file `.env.example` ke `.env`:
+```bash
+cp .env.example .env
+```
+Pastikan pengaturan URL di `.env` mencakup `INTERNAL_API_URL`:
+```env
+APP_URL=http://localhost:8000
+INTERNAL_API_URL=http://127.0.0.1:8011
+APP_FAKER_LOCALE=id_ID
+```
+Generate application key:
+```bash
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 4. Migrasi & Seeding Database
+Jalankan migrasi dan isi database dengan data dummy realistis:
+```bash
+php artisan migrate:fresh --seed
+```
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 🌐 Menjalankan Dua Server (Wajib untuk Dashboard & Laporan)
 
-## Security Vulnerabilities
+Server bawaan `php artisan serve` hanya memproses satu request pada satu waktu (single-threaded). Karena halaman Dashboard dan Laporan memanggil API aplikasi ini sendiri via HTTP, **dibutuhkan dua terminal server** agar tidak terjadi *deadlock*:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- **Terminal 1 — Server Utama (untuk akses browser):**
+  ```bash
+  php artisan serve --port=8000
+  ```
+  Akses di browser: [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
-## License
+- **Terminal 2 — Server Internal API (khusus menerima request `Http::get()`):**
+  ```bash
+  php artisan serve --port=8011
+  ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 🔑 Akun Login Bawaan (Hasil Seeding)
+
+| Role | Email | Password | Nama | Hak Akses |
+|---|---|---|---|---|
+| **Admin** | `admin@pens.ac.id` | `password` | Bambang Sutrisno | Akses semua menu (termasuk menu Kategori) |
+| **Petugas** | `petugas1@pens.ac.id` | `password` | Siti Rahmawati | Sirkulasi buku, anggota, peminjaman |
+| **Petugas** | `petugas2@pens.ac.id` | `password` | Ahmad Fauzi | Sirkulasi buku, anggota, peminjaman |
+
+---
+
+## 🧪 Menjalankan Pengujian Otomatis
+
+Aplikasi dilengkapi feature test komprehensif (30 assertions testing mencakup autentikasi, otorisasi, REST API, dashboard, dan laporan):
+```bash
+php artisan test
+```
+atau:
+```bash
+php vendor/phpunit/phpunit/phpunit
+```
+
+---
+
+## 📄 Dokumen Terkait
+
+- [DEMO.md](./DEMO.md) — Panduan skenario demonstrasi aplikasi live langkah demi langkah untuk UAS (Pertemuan 11).
+- [API.md](./API.md) — Dokumentasi lengkap seluruh 11 endpoint REST API beserta contoh request dan response JSON.
